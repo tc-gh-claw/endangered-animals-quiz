@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endangered Animals · Quiz Arena</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b2b1e 0%, #1c4d2f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            padding: 16px;
+        }
+
+        .game-wrapper {
+            max-width: 1000px;
+            width: 100%;
+            background: #efe6d7;
+            background-image: radial-gradient(circle at 20% 30%, #fff7e8 0%, #d9c8b2 90%);
+            border-radius: 60px 60px 40px 40px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 240, 0.6);
+            padding: 24px 24px 30px;
+            border: 6px solid #a67c4e;
+        }
+
+        /* ====== SHARED SCREEN TITLES ====== */
+        .screen-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1f4a2b;
+            text-shadow: 3px 3px 0 #e1c9a5, 5px 5px 0 rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .screen-sub {
+            font-size: 1rem;
+            color: #5a4a32;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        /* ====== BUTTONS ====== */
+        .btn {
+            background: #5f4e38;
+            color: #f0e7d6;
+            border: 3px solid #ab8f64;
+            border-radius: 40px;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #2e241a, 0 12px 16px rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            font-family: inherit;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: #7a684e;
+            transform: scale(1.02);
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 #2e241a;
+        }
+
+        .btn.primary {
+            background: #b57938;
+            border-color: #ebc384;
+            box-shadow: 0 10px 0 #684a24, 0 12px 16px rgba(0,0,0,0.3);
+        }
+
+        .btn.primary:hover {
+            background: #c98a4a;
+        }
+
+        .btn.primary:active {
+            box-shadow: 0 4px 0 #684a24;
+        }
+
+        .btn.small {
+            padding: 10px 22px;
+            font-size: 0.95rem;
+            box-shadow: 0 6px 0 #2e241a, 0 6px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn.small:active {
+            box-shadow: 0 2px 0 #2e241a;
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        /* ====== SCREEN CONTAINERS ====== */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* ====== RULES SCREEN ====== */
+        .rules-box {
+            background: #2e3d2b;
+            border-radius: 40px;
+            padding: 24px 28px;
+            box-shadow: inset 0 -6px 0 #131f12, 0 8px 0 #5a4a32;
+            border-bottom: 3px solid #b99e6f;
+            color: #fcf9e0;
+            margin-bottom: 8px;
+        }
+
+        .rules-box h3 {
+            font-size: 1.2rem;
+            color: #ffd966;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 #1c2a1c;
+        }
+
+        .rules-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .rules-box li {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.8;
+            padding-left: 26px;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .rules-box li::before {
+            content: '🌿';
+            position: absolute;
+            left: 0;
+            font-size: 0.95rem;
+        }
+
+        .rules-box .highlight {
+            color: #ffd966;
+            font-weight: 700;
+        }
+
+        /* ====== MODE SELECT ====== */
+        .mode-cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .mode-card {
+            flex: 1;
+            min-width: 260px;
+            max-width: 360px;
+            background: #2e3d2b;
+            border-radius: 40px;
+            padding: 26px 22px;
+            box-shadow: inset 0 -6px 0 #131f12, 0 8px 0 #5a4a32;
+            border: 3px solid transparent;
+            text-align: center;
+            color: #fcf9e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-card:hover {
+            border-color: #ffd966;
+            transform: translateY(-4px);
+            box-shadow: inset 0 -6px 0 #131f12, 0 12px 0 #5a4a32, 0 0 24px rgba(255,217,102,0.5);
+        }
+
+        .mode-card .mode-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .mode-card .mode-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 0 #1c2a1c;
+        }
+
+        .mode-card .mode-desc {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #cfe6b0;
+            line-height: 1.5;
+        }
+
+        /* ====== NAME INPUT SCREEN ====== */
+        .name-inputs {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .name-field {
+            flex: 1;
+            min-width: 240px;
+            max-width: 340px;
+            background: #2e3d2b;
+            border-radius: 36px;
+            padding: 20px;
+            box-shadow: inset 0 -5px 0 #131f12, 0 8px 0 #5a4a32;
+            text-align: center;
+        }
+
+        .name-field .avatar {
+            font-size: 2.6rem;
+            margin-bottom: 6px;
+        }
+
+        .name-field label {
+            display: block;
+            color: #ffd966;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 0 #1c2a1c;
+        }
+
+        .name-field input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 24px;
+            border: 3px solid #a67c4e;
+            background: #f5ecd9;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2e3d2b;
+            text-align: center;
+            font-family: inherit;
+            outline: none;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .name-field input:focus {
+            border-color: #ffd966;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.15), 0 0 12px rgba(255,217,102,0.7);
+        }
+
+        .name-field input.error {
+            border-color: #ff5a5a;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.15), 0 0 12px rgba(255,90,90,0.7);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .input-warning {
+            color: #ff9a9a;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 8px;
+            min-height: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ====== GAME SCREEN ====== */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding: 0 8px;
+        }
+
+        .game-header .title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1f4a2b;
+            text-shadow: 2px 2px 0 #e1c9a5;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-bar-wrapper {
+            background: #1f2e1f;
+            border-radius: 30px;
+            height: 18px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
+            border: 2px solid #6b563a;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6fbf6f, #b5d96b, #ffd966);
+            border-radius: 30px;
+            transition: width 0.4s ease;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffefc0;
+            background: #1f2e1f;
+            border-radius: 40px;
+            padding: 8px 20px;
+            margin-bottom: 14px;
+            box-shadow: inset 0 -5px 0 #0d1a0d, 0 6px 0 #6b563a;
+            letter-spacing: 3px;
+            font-variant-numeric: tabular-nums;
+            border: 2px solid #6b563a;
+        }
+
+        .timer-display .timer-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #b5d96b;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .turn-banner {
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ffefc0;
+            background: #3d6b3d;
+            border-radius: 40px;
+            padding: 10px 18px;
+            margin-bottom: 14px;
+            box-shadow: inset 0 -4px 0 #1f3d1f, 0 5px 0 #6b563a;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .split-panes {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .player-pane {
+            flex: 1;
+            border-radius: 36px;
+            padding: 18px 16px;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 6px 0 #4d3a24;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            min-height: 440px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-pane.p1-pane {
+            background: linear-gradient(135deg, #3a5f8a, #2b4f6d);
+        }
+
+        .player-pane.p2-pane {
+            background: linear-gradient(135deg, #8a4a3a, #6d352b);
+        }
+
+        .player-pane.answered {
+            opacity: 0.78;
+        }
+
+        .player-pane.correct-glow {
+            border-color: #7bff7b;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 6px 0 #4d3a24, 0 0 22px rgba(123,255,123,0.8);
+        }
+
+        .player-pane.wrong-glow {
+            border-color: #ff7b7b;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 6px 0 #4d3a24, 0 0 22px rgba(255,123,123,0.8);
+        }
+
+        .pane-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #fcf9e9;
+            flex-wrap: wrap;
+        }
+
+        .pane-avatar {
+            font-size: 2rem;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.4));
+        }
+
+        .pane-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+        }
+
+        .pane-money {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #ffd966;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+            margin-left: auto;
+        }
+
+        .pane-streak {
+            display: block;
+            width: 100%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #b5d96b;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .pane-question {
+            background: rgba(0,0,0,0.25);
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 12px;
+            color: #fcf9e0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.4;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .pane-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .pane-option {
+            background: #f5ecd9;
+            border: 3px solid #a67c4e;
+            border-radius: 24px;
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2e3d2b;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 6px 0 #7a5c3a, 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            font-family: inherit;
+            line-height: 1.3;
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pane-option:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #7a5c3a;
+        }
+
+        .pane-option:disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        .pane-option.selected {
+            border-color: #ffd966;
+            box-shadow: 0 6px 0 #b57938, 0 0 18px rgba(255,217,102,0.8);
+        }
+
+        .pane-option.correct-reveal {
+            background: #8fd48f;
+            border-color: #3d7a3d;
+            box-shadow: 0 6px 0 #2b5a2b;
+        }
+
+        .pane-option.wrong-reveal {
+            background: #f0a0a0;
+            border-color: #a03a3a;
+            box-shadow: 0 6px 0 #6a2a2a;
+        }
+
+        .pane-status {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffefc0;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 6px 10px;
+        }
+
+        .single-pane {
+            border-radius: 36px;
+            padding: 22px 20px;
+            background: linear-gradient(135deg, #3a5f8a, #2b4f6d);
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 6px 0 #4d3a24;
+            border: 3px solid transparent;
+            margin-bottom: 14px;
+            transition: all 0.3s;
+        }
+
+        .single-pane.correct-glow {
+            border-color: #7bff7b;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 6px 0 #4d3a24, 0 0 22px rgba(123,255,123,0.8);
+        }
+
+        .single-pane.wrong-glow {
+            border-color: #ff7b7b;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 6px 0 #4d3a24, 0 0 22px rgba(255,123,123,0.8);
+        }
+
+        .single-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: #fcf9e9;
+        }
+
+        .single-header .pane-avatar {
+            font-size: 2.4rem;
+        }
+
+        .single-header .pane-name {
+            font-size: 1.2rem;
+        }
+
+        .single-header .pane-score {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffd966;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+            margin-left: auto;
+        }
+
+        .single-question {
+            background: rgba(0,0,0,0.25);
+            border-radius: 28px;
+            padding: 18px;
+            margin-bottom: 16px;
+            color: #fcf9e0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.5;
+            min-height: 86px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .single-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .single-option {
+            background: #f5ecd9;
+            border: 3px solid #a67c4e;
+            border-radius: 24px;
+            padding: 16px 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #2e3d2b;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 6px 0 #7a5c3a, 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            font-family: inherit;
+            line-height: 1.3;
+            min-height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .single-option:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #7a5c3a;
+        }
+
+        .single-option:disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        .single-option.selected {
+            border-color: #ffd966;
+            box-shadow: 0 6px 0 #b57938, 0 0 18px rgba(255,217,102,0.8);
+        }
+
+        .single-option.correct-reveal {
+            background: #8fd48f;
+            border-color: #3d7a3d;
+            box-shadow: 0 6px 0 #2b5a2b;
+        }
+
+        .single-option.wrong-reveal {
+            background: #f0a0a0;
+            border-color: #a03a3a;
+            box-shadow: 0 6px 0 #6a2a2a;
+        }
+
+        .single-status {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffefc0;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 8px 12px;
+        }
+
+        .fact-box {
+            background: #1f3a1f;
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin: 12px 0 4px;
+            text-align: center;
+            color: #cfe6b0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-left: 8px solid #9fc46b;
+            letter-spacing: 0.3px;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.5;
+            transition: all 0.3s;
+        }
+
+        /* ====== LEADERBOARD SCREEN ====== */
+        .leaderboard-box {
+            background: #2e3d2b;
+            border-radius: 40px;
+            padding: 20px 24px;
+            box-shadow: inset 0 -6px 0 #131f12, 0 8px 0 #5a4a32;
+            border-bottom: 3px solid #b99e6f;
+            margin-bottom: 10px;
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            border-radius: 28px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .leaderboard-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .leaderboard-row.gold {
+            background: linear-gradient(135deg, rgba(255,217,102,0.25), rgba(255,217,102,0.08));
+            border-color: #ffd966;
+            box-shadow: 0 0 20px rgba(255,217,102,0.5);
+        }
+
+        .leaderboard-row.silver {
+            background: linear-gradient(135deg, rgba(200,200,220,0.2), rgba(200,200,220,0.05));
+            border-color: #c8c8dc;
+        }
+
+        .leaderboard-row.bronze {
+            background: linear-gradient(135deg, rgba(205,127,50,0.2), rgba(205,127,50,0.05));
+            border-color: #cd7f32;
+        }
+
+        .lb-rank {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffd966;
+            min-width: 40px;
+            text-align: center;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+        }
+
+        .lb-avatar {
+            font-size: 1.8rem;
+        }
+
+        .lb-info {
+            flex: 1;
+            color: #fcf9e9;
+        }
+
+        .lb-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+
+        .lb-detail {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #b5d96b;
+            margin-top: 3px;
+        }
+
+        .lb-score {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffd966;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+            text-align: right;
+            min-width: 90px;
+        }
+
+        .lb-score small {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #cfe6b0;
+            letter-spacing: 0.5px;
+        }
+
+        .lb-empty {
+            text-align: center;
+            color: #cfe6b0;
+            font-weight: 600;
+            padding: 30px 10px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 750px) {
+            .split-panes {
+                flex-direction: column;
+            }
+            .player-pane {
+                min-height: auto;
+            }
+            .single-options {
+                grid-template-columns: 1fr;
+            }
+            .screen-title {
+                font-size: 1.5rem;
+            }
+            .name-field {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper">
+
+    <!-- ==================== RULES SCREEN ==================== -->
+    <div class="screen active" id="rulesScreen">
+        <div class="screen-title">🌍 Endangered Animals Arena</div>
+        <div class="screen-sub">Learn why endangered animals matter. Compete. Climb the leaderboard!</div>
+
+        <div class="rules-box">
+            <h3>📜 GAME RULES</h3>
+            <ul>
+                <li>Each round has <span class="highlight">15 questions</span> about why endangered animals are important.</li>
+                <li><span class="highlight">Single Player:</span> Beat the clock! Your total time is recorded. Answer as many as you can correctly.</li>
+                <li><span class="highlight">2-Player Duel:</span> Both players answer the same question on separate panes.</li>
+                <li>Answers are <span class="highlight">hidden</span> until both players have submitted. Then the correct answer is revealed.</li>
+                <li>Each correct answer earns <span class="highlight">$10 base money</span>.</li>
+                <li>Consecutive correct answers build a <span class="highlight">streak</span> — each extra streak adds <span class="highlight">+$5</span> (e.g., 1st=$10, 2nd=$15, 3rd=$20…).</li>
+                <li>A wrong answer <span class="highlight">resets your streak</span> to zero.</li>
+                <li>The player with the <span class="highlight">most money</span> wins the duel!</li>
+                <li><span class="highlight">Single Player</span> scores are saved to the leaderboard. Same name replaces old score.</li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn primary" id="goToModeBtn">▶ CONTINUE</button>
+        </div>
+    </div>
+
+    <!-- ==================== MODE SELECT ==================== -->
+    <div class="screen" id="modeScreen">
+        <div class="screen-title">🎮 Choose Your Mode</div>
+        <div class="screen-sub">Select how you want to play</div>
+
+        <div class="mode-cards">
+            <div class="mode-card" id="chooseSingleBtn">
+                <span class="mode-icon">⏱️</span>
+                <div class="mode-title">Single Player</div>
+                <div class="mode-desc">Beat the clock · 15 questions<br>Score saved to leaderboard</div>
+            </div>
+            <div class="mode-card" id="chooseDuelBtn">
+                <span class="mode-icon">💰</span>
+                <div class="mode-title">2-Player Duel</div>
+                <div class="mode-desc">Streak money · Most cash wins<br>No leaderboard — just for fun!</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn small" id="backToRulesBtn">← Back to Rules</button>
+            <button class="btn small" id="viewLeaderboardBtn">🏆 View Leaderboard</button>
+        </div>
+    </div>
+
+    <!-- ==================== NAME INPUT SCREEN ==================== -->
+    <div class="screen" id="nameScreen">
+        <div class="screen-title">📝 Enter Player Names</div>
+        <div class="screen-sub" id="nameSub">Type your name to begin</div>
+
+        <div class="name-inputs" id="nameInputs">
+            <div class="name-field">
+                <div class="avatar">🦊</div>
+                <label style="color:#7aa5d9;" id="p1Label">PLAYER 1</label>
+                <input type="text" id="p1NameInput" placeholder="Enter name..." maxlength="12">
+                <div class="input-warning" id="p1Warning"></div>
+            </div>
+            <div class="name-field" id="p2NameField">
+                <div class="avatar">🐻</div>
+                <label style="color:#d98f7a;">PLAYER 2</label>
+                <input type="text" id="p2NameInput" placeholder="Enter name..." maxlength="12">
+                <div class="input-warning" id="p2Warning"></div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn small" id="backToModeBtn">← Back</button>
+            <button class="btn primary" id="startGameBtn" disabled>🚀 START GAME</button>
+        </div>
+    </div>
+
+    <!-- ==================== GAME SCREEN ==================== -->
+    <div class="screen" id="gameScreen">
+        <div class="game-header">
+            <div class="title"><span>🌍</span> <span id="gameTitle">Endangered Animals</span></div>
+            <button class="btn small" id="quitGameBtn" style="background:#a04a3a; border-color:#d98f7a; box-shadow:0 6px 0 #5a2a1f;">✕ Quit</button>
+        </div>
+
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="turn-banner" id="turnBanner">Get ready...</div>
+
+        <div class="timer-display" id="timerDisplay">
+            <span class="timer-label">TOTAL TIME</span>
+            <span id="timerValue">0.0</span>s
+        </div>
+
+        <!-- Duel panes -->
+        <div class="split-panes" id="splitPanes">
+            <div class="player-pane p1-pane" id="p1Pane">
+                <div class="pane-header">
+                    <div class="pane-avatar">🦊</div>
+                    <div class="pane-name" id="p1NameDisplay">Player 1</div>
+                    <div class="pane-money" id="p1Money">$0</div>
+                    <div class="pane-streak" id="p1Streak">🔥 Streak: 0</div>
+                </div>
+                <div class="pane-question" id="p1Question">Loading...</div>
+                <div class="pane-options" id="p1Options"></div>
+                <div class="pane-status" id="p1Status">Choose an answer</div>
+            </div>
+
+            <div class="player-pane p2-pane" id="p2Pane">
+                <div class="pane-header">
+                    <div class="pane-avatar">🐻</div>
+                    <div class="pane-name" id="p2NameDisplay">Player 2</div>
+                    <div class="pane-money" id="p2Money">$0</div>
+                    <div class="pane-streak" id="p2Streak">🔥 Streak: 0</div>
+                </div>
+                <div class="pane-question" id="p2Question">Loading...</div>
+                <div class="pane-options" id="p2Options"></div>
+                <div class="pane-status" id="p2Status">Choose an answer</div>
+            </div>
+        </div>
+
+        <!-- Single pane -->
+        <div class="single-pane" id="singlePane" style="display:none;">
+            <div class="single-header">
+                <div class="pane-avatar">👤</div>
+                <div class="pane-name" id="singleNameDisplay">Your Progress</div>
+                <div class="pane-score" id="singleScore">0 / 15</div>
+            </div>
+            <div class="single-question" id="singleQuestion">Loading...</div>
+            <div class="single-options" id="singleOptions"></div>
+            <div class="single-status" id="singleStatus">Choose an answer</div>
+        </div>
+
+        <div class="fact-box" id="factBox">
+            💡 Did you know? Every species plays a unique role in the web of life.
+        </div>
+    </div>
+
+    <!-- ==================== RESULT SCREEN (DUEL ONLY) ==================== -->
+    <div class="screen" id="resultScreen">
+        <div class="screen-title" id="resultTitle">Duel Results</div>
+        <div class="screen-sub" id="resultSub">Final scores</div>
+
+        <div class="result-cards" id="resultCards" style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:22px;"></div>
+
+        <div class="btn-group">
+            <button class="btn primary" id="duelPlayAgainBtn">🔄 Play Again</button>
+            <button class="btn" id="duelBackToMenuBtn">🏠 Main Menu</button>
+        </div>
+    </div>
+
+    <!-- ==================== LEADERBOARD SCREEN (SINGLE ONLY) ==================== -->
+    <div class="screen" id="leaderboardScreen">
+        <div class="screen-title">🏆 Leaderboard</div>
+        <div class="screen-sub" id="leaderboardSub">Top scores from this session</div>
+
+        <div class="leaderboard-box" id="leaderboardBox">
+            <div class="lb-empty">Loading scores...</div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn primary" id="singlePlayAgainBtn">🔄 Play Again</button>
+            <button class="btn" id="singleBackToMenuBtn">🏠 Main Menu</button>
+        </div>
+    </div>
+
+    <div class="footer-note" style="text-align:center; font-size:0.85rem; color:#b5a17e; margin-top:18px; font-weight:500;">
+        Protecting endangered animals protects our shared future
+    </div>
+</div>
+
+<script>
+(function(){
+    // ============================================================
+    //  QUESTION POOL
+    // ============================================================
+    const QUESTION_POOL = [
+        { question: "Why are endangered animals important for ecosystems?",
+          options: ["They keep nature balanced", "They are just pretty", "They eat everything", "They have no effect"], correct: 0,
+          fact: "Each species has a role — losing one can affect many others." },
+        { question: "How do endangered animals help medicine?",
+          options: ["They provide new medicines", "They cause diseases", "They are not useful", "They only live in zoos"], correct: 0,
+          fact: "Many medicines come from compounds found in wild species." },
+        { question: "What happens when a species goes extinct?",
+          options: ["The ecosystem may collapse", "Nothing changes", "New species appear instantly", "It helps other animals"], correct: 0,
+          fact: "Extinction can trigger a chain reaction in the food web." },
+        { question: "Why should we protect endangered animals for future generations?",
+          options: ["They are our heritage", "They are worthless", "They will live forever anyway", "Only scientists care"], correct: 0,
+          fact: "Future generations deserve to see these amazing creatures too." },
+        { question: "How do endangered animals support tourism and jobs?",
+          options: ["Wildlife tourism creates jobs", "They scare tourists away", "They have no economic value", "Only zoos make money"], correct: 0,
+          fact: "Eco-tourism provides income for local communities." },
+        { question: "What is a keystone species?",
+          options: ["A species that holds the ecosystem together", "A species that is very small", "A species that lives in stone", "A species with no predators"], correct: 0,
+          fact: "Keystone species like wolves or sea otters keep ecosystems healthy." },
+        { question: "Why is biodiversity important?",
+          options: ["It makes ecosystems stronger", "It makes everything the same", "It only matters to scientists", "It has no value"], correct: 0,
+          fact: "Biodiversity helps ecosystems recover from disasters." },
+        { question: "How does saving endangered animals help humans?",
+          options: ["They provide clean air and water", "They harm humans", "They have no impact", "They only live far away"], correct: 0,
+          fact: "Healthy ecosystems give us clean air, water, and food." },
+        { question: "What is the main cause of endangerment?",
+          options: ["Human activity", "Natural cycles", "Too many animals", "Weather changes"], correct: 0,
+          fact: "Habitat loss, pollution, and poaching are mostly human-driven." },
+        { question: "Why should we care about animals we never see?",
+          options: ["They keep ecosystems alive", "They are useless", "Only cute ones matter", "They don't exist"], correct: 0,
+          fact: "Even unseen species contribute to a healthy planet." },
+        { question: "How do endangered animals help agriculture?",
+          options: ["They pollinate crops and spread seeds", "They eat all crops", "They have no role", "They only live in forests"], correct: 0,
+          fact: "Bees, birds, and bats are vital pollinators for our food." },
+        { question: "What does 'endangered' mean?",
+          options: ["At risk of extinction", "Very dangerous", "Extinct already", "Very common"], correct: 0,
+          fact: "Endangered species are at serious risk of disappearing forever." },
+        { question: "Why is protecting endangered animals a global issue?",
+          options: ["Ecosystems cross borders", "Only one country matters", "It's not global", "Animals stay in one place"], correct: 0,
+          fact: "Many species migrate, so protecting them needs cooperation." },
+        { question: "What can students do to help endangered animals?",
+          options: ["Learn and spread awareness", "Nothing at all", "Only adults can help", "Ignore the problem"], correct: 0,
+          fact: "Young people can make a big difference through education." },
+        { question: "Why are pollinators like bees important?",
+          options: ["They help plants reproduce", "They make honey only", "They sting pests", "They are not important"], correct: 0,
+          fact: "Without pollinators, many fruits and vegetables would disappear." },
+        { question: "How do forests and wildlife work together?",
+          options: ["Animals help forests grow", "Forests don't need animals", "Animals destroy forests", "They are unrelated"], correct: 0,
+          fact: "Animals spread seeds and nutrients, keeping forests healthy." },
+        { question: "Why is it important to protect habitats?",
+          options: ["Habitats are homes for wildlife", "Habitats are just land", "Animals can live anywhere", "Habitats don't matter"], correct: 0,
+          fact: "Without healthy habitats, animals cannot survive." },
+        { question: "What role do predators play in nature?",
+          options: ["They keep prey populations healthy", "They kill everything", "They are useless", "They only eat plants"], correct: 0,
+          fact: "Predators prevent overpopulation and disease in prey species." },
+        { question: "How does climate change affect endangered animals?",
+          options: ["It destroys their habitats", "It has no effect", "It helps them adapt instantly", "It only affects plants"], correct: 0,
+          fact: "Rising temperatures and extreme weather threaten many species." },
+        { question: "Why are wetlands important for wildlife?",
+          options: ["They support many species", "They are just mud", "They have no life", "They only exist in cold places"], correct: 0,
+          fact: "Wetlands are nurseries for fish, birds, and amphibians." },
+        { question: "What is the role of coral reefs in the ocean?",
+          options: ["They support marine life", "They are just rocks", "They have no life", "They only exist in cold water"], correct: 0,
+          fact: "Coral reefs are home to 25% of all marine species." },
+        { question: "Why are rainforests called the lungs of the Earth?",
+          options: ["They produce oxygen", "They are green", "They are wet", "They have many trees"], correct: 0,
+          fact: "Rainforests produce about 20% of the world's oxygen." }
+    ];
+
+    // ============================================================
+    //  STATE
+    // ============================================================
+    const TOTAL_QUESTIONS = 15;
+    const BASE_MONEY = 10;
+    const STREAK_MULTIPLIER = 5;
+
+    let mode = 'single';
+    let questionSet = [];
+    let qIndex = 0;
+    let currentQuestion = null;
+    let shuffledOptions = [];
+
+    // Player names
+    let p1Name = '';
+    let p2Name = '';
+    let singleName = '';
+
+    // Single player
+    let single = { correct: 0, answerIndex: null, answered: false, totalTime: 0 };
+
+    // Duel
+    let p1 = { money: 0, correct: 0, streak: 0, bestStreak: 0, answerIndex: null, answered: false };
+    let p2 = { money: 0, correct: 0, streak: 0, bestStreak: 0, answerIndex: null, answered: false };
+
+    // Timer
+    let globalTimerInterval = null;
+    let globalElapsed = 0;
+
+    // Leaderboard storage
+    let leaderboard = [];
+
+    // DOM refs
+    const screens = {
+        rules: document.getElementById('rulesScreen'),
+        mode: document.getElementById('modeScreen'),
+        name: document.getElementById('nameScreen'),
+        game: document.getElementById('gameScreen'),
+        result: document.getElementById('resultScreen'),
+        leaderboard: document.getElementById('leaderboardScreen')
+    };
+
+    const gameTitle = document.getElementById('gameTitle');
+    const turnBanner = document.getElementById('turnBanner');
+    const factBox = document.getElementById('factBox');
+    const timerValue = document.getElementById('timerValue');
+    const progressBar = document.getElementById('progressBar');
+    const splitPanes = document.getElementById('splitPanes');
+    const singlePane = document.getElementById('singlePane');
+
+    // Duel DOM
+    const p1Pane = document.getElementById('p1Pane');
+    const p2Pane = document.getElementById('p2Pane');
+    const p1Money = document.getElementById('p1Money');
+    const p2Money = document.getElementById('p2Money');
+    const p1Streak = document.getElementById('p1Streak');
+    const p2Streak = document.getElementById('p2Streak');
+    const p1Question = document.getElementById('p1Question');
+    const p2Question = document.getElementById('p2Question');
+    const p1Options = document.getElementById('p1Options');
+    const p2Options = document.getElementById('p2Options');
+    const p1Status = document.getElementById('p1Status');
+    const p2Status = document.getElementById('p2Status');
+    const p1NameDisplay = document.getElementById('p1NameDisplay');
+    const p2NameDisplay = document.getElementById('p2NameDisplay');
+
+    // Single DOM
+    const singleScore = document.getElementById('singleScore');
+    const singleQuestion = document.getElementById('singleQuestion');
+    const singleOptions = document.getElementById('singleOptions');
+    const singleStatus = document.getElementById('singleStatus');
+    const singleNameDisplay = document.getElementById('singleNameDisplay');
+
+    // Name inputs
+    const p1NameInput = document.getElementById('p1NameInput');
+    const p2NameInput = document.getElementById('p2NameInput');
+    const p1Warning = document.getElementById('p1Warning');
+    const p2Warning = document.getElementById('p2Warning');
+    const startGameBtn = document.getElementById('startGameBtn');
+    const p2NameField = document.getElementById('p2NameField');
+    const p1Label = document.getElementById('p1Label');
+
+    // Leaderboard
+    const leaderboardBox = document.getElementById('leaderboardBox');
+    const leaderboardSub = document.getElementById('leaderboardSub');
+
+    // Result
+    const resultTitle = document.getElementById('resultTitle');
+    const resultSub = document.getElementById('resultSub');
+    const resultCards = document.getElementById('resultCards');
+
+    // ============================================================
+    //  UTILITIES
+    // ============================================================
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function pickRandomQuestions(count) {
+        const shuffled = shuffleArray([...QUESTION_POOL]);
+        const result = [];
+        for (let i = 0; i < count; i++) {
+            result.push(shuffled[i % shuffled.length]);
+        }
+        return result;
+    }
+
+    function formatTime(t) {
+        return t.toFixed(1) + 's';
+    }
+
+    function showScreen(name) {
+        Object.keys(screens).forEach(k => screens[k].classList.remove('active'));
+        screens[name].classList.add('active');
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '"') return '&quot;';
+            return m;
+        });
+    }
+
+    // ============================================================
+    //  NAME VALIDATION
+    // ============================================================
+    function validateNames() {
+        let valid = true;
+
+        if (mode === 'single') {
+            const name = p1NameInput.value.trim();
+            if (name.length === 0) {
+                p1Warning.textContent = '⚠️ Please enter your name!';
+                p1NameInput.classList.add('error');
+                valid = false;
+            } else {
+                p1Warning.textContent = '';
+                p1NameInput.classList.remove('error');
+            }
+        } else {
+            const n1 = p1NameInput.value.trim();
+            const n2 = p2NameInput.value.trim();
+
+            if (n1.length === 0) {
+                p1Warning.textContent = '⚠️ Please enter Player 1 name!';
+                p1NameInput.classList.add('error');
+                valid = false;
+            } else {
+                p1Warning.textContent = '';
+                p1NameInput.classList.remove('error');
+            }
+
+            if (n2.length === 0) {
+                p2Warning.textContent = '⚠️ Please enter Player 2 name!';
+                p2NameInput.classList.add('error');
+                valid = false;
+            } else {
+                p2Warning.textContent = '';
+                p2NameInput.classList.remove('error');
+            }
+
+            if (n1.length > 0 && n2.length > 0 && n1.toLowerCase() === n2.toLowerCase()) {
+                p1Warning.textContent = '⚠️ Names should be different!';
+                p2Warning.textContent = '⚠️ Names should be different!';
+                p1NameInput.classList.add('error');
+                p2NameInput.classList.add('error');
+                valid = false;
+            }
+        }
+
+        startGameBtn.disabled = !valid;
+        return valid;
+    }
+
+    p1NameInput.addEventListener('input', () => { p1Warning.textContent = ''; p1NameInput.classList.remove('error'); validateNames(); });
+    p2NameInput.addEventListener('input', () => { p2Warning.textContent = ''; p2NameInput.classList.remove('error'); validateNames(); });
+
+    // ============================================================
+    //  SCREEN FLOW
+    // ============================================================
+    document.getElementById('goToModeBtn').addEventListener('click', () => showScreen('mode'));
+    document.getElementById('backToRulesBtn').addEventListener('click', () => showScreen('rules'));
+    document.getElementById('backToModeBtn').addEventListener('click', () => showScreen('mode'));
+
+    document.getElementById('chooseSingleBtn').addEventListener('click', () => {
+        mode = 'single';
+        document.getElementById('nameSub').textContent = 'Enter your name to begin the timed challenge';
+        p2NameField.style.display = 'none';
+        p1Label.textContent = 'YOUR NAME';
+        p1NameInput.value = '';
+        p2NameInput.value = '';
+        p1Warning.textContent = '';
+        p2Warning.textContent = '';
+        p1NameInput.classList.remove('error');
+        p2NameInput.classList.remove('error');
+        startGameBtn.disabled = true;
+        showScreen('name');
+    });
+
+    document.getElementById('chooseDuelBtn').addEventListener('click', () => {
+        mode = 'duel';
+        document.getElementById('nameSub').textContent = 'Enter both player names to begin the duel';
+        p2NameField.style.display = 'block';
+        p1Label.textContent = 'PLAYER 1';
+        p1NameInput.value = '';
+        p2NameInput.value = '';
+        p1Warning.textContent = '';
+        p2Warning.textContent = '';
+        p1NameInput.classList.remove('error');
+        p2NameInput.classList.remove('error');
+        startGameBtn.disabled = true;
+        showScreen('name');
+    });
+
+    document.getElementById('startGameBtn').addEventListener('click', () => {
+        if (!validateNames()) return;
+
+        if (mode === 'single') {
+            singleName = p1NameInput.value.trim();
+        } else {
+            p1Name = p1NameInput.value.trim();
+            p2Name = p2NameInput.value.trim();
+        }
+        startGame();
+    });
+
+    document.getElementById('quitGameBtn').addEventListener('click', () => {
+        stopGlobalTimer();
+        showScreen('mode');
+    });
+
+    document.getElementById('duelPlayAgainBtn').addEventListener('click', () => showScreen('mode'));
+    document.getElementById('duelBackToMenuBtn').addEventListener('click', () => showScreen('rules'));
+    document.getElementById('singlePlayAgainBtn').addEventListener('click', () => showScreen('mode'));
+    document.getElementById('singleBackToMenuBtn').addEventListener('click', () => showScreen('rules'));
+
+    document.getElementById('viewLeaderboardBtn').addEventListener('click', () => {
+        renderLeaderboard();
+        showScreen('leaderboard');
+    });
+
+    // ============================================================
+    //  START GAME
+    // ============================================================
+    function startGame() {
+        questionSet = pickRandomQuestions(TOTAL_QUESTIONS);
+        qIndex = 0;
+
+        single = { correct: 0, answerIndex: null, answered: false, totalTime: 0 };
+        p1 = { money: 0, correct: 0, streak: 0, bestStreak: 0, answerIndex: null, answered: false };
+        p2 = { money: 0, correct: 0, streak: 0, bestStreak: 0, answerIndex: null, answered: false };
+
+        globalElapsed = 0;
+        timerValue.textContent = '0.0';
+        progressBar.style.width = '0%';
+
+        p1NameDisplay.textContent = p1Name || 'Player 1';
+        p2NameDisplay.textContent = p2Name || 'Player 2';
+        singleNameDisplay.textContent = (singleName || 'You') + ' — Progress';
+
+        if (mode === 'single') {
+            splitPanes.style.display = 'none';
+            singlePane.style.display = 'block';
+            gameTitle.textContent = '⏱️ Single Player · Beat the Clock';
+        } else {
+            splitPanes.style.display = 'flex';
+            singlePane.style.display = 'none';
+            gameTitle.textContent = '💰 2-Player Duel · Streak Money';
+            p1Pane.classList.remove('answered', 'correct-glow', 'wrong-glow');
+            p2Pane.classList.remove('answered', 'correct-glow', 'wrong-glow');
+        }
+
+        singlePane.classList.remove('correct-glow', 'wrong-glow');
+        updateAllDisplays();
+        showScreen('game');
+        loadQuestion();
+        startGlobalTimer();
+    }
+
+    // ============================================================
+    //  TIMER
+    // ============================================================
+    function startGlobalTimer() {
+        stopGlobalTimer();
+        globalTimerInterval = setInterval(() => {
+            globalElapsed += 0.1;
+            timerValue.textContent = globalElapsed.toFixed(1);
+        }, 100);
+    }
+
+    function stopGlobalTimer() {
+        if (globalTimerInterval) {
+            clearInterval(globalTimerInterval);
+            globalTimerInterval = null;
+        }
+    }
+
+    // ============================================================
+    //  LOAD QUESTION
+    // ============================================================
+    function loadQuestion() {
+        if (qIndex >= TOTAL_QUESTIONS) {
+            endGame();
+            return;
+        }
+
+        currentQuestion = questionSet[qIndex];
+        const opts = currentQuestion.options.map((text, idx) => ({
+            text: text,
+            isCorrect: idx === currentQuestion.correct
+        }));
+        shuffledOptions = shuffleArray([...opts]);
+
+        single.answered = false;
+        single.answerIndex = null;
+        p1.answered = false;
+        p1.answerIndex = null;
+        p2.answered = false;
+        p2.answerIndex = null;
+
+        progressBar.style.width = ((qIndex / TOTAL_QUESTIONS) * 100) + '%';
+
+        if (mode === 'single') {
+            singleQuestion.textContent = currentQuestion.question;
+            singleStatus.textContent = 'Choose an answer';
+            singlePane.classList.remove('correct-glow', 'wrong-glow');
+            singleOptions.innerHTML = '';
+
+            shuffledOptions.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'single-option';
+                btn.textContent = opt.text;
+                btn.dataset.index = index;
+                btn.addEventListener('click', () => handleSingleAnswer(index, btn));
+                singleOptions.appendChild(btn);
+            });
+
+            turnBanner.textContent = `⏱️ Question ${qIndex + 1} / ${TOTAL_QUESTIONS}`;
+        } else {
+            p1Pane.classList.remove('answered', 'correct-glow', 'wrong-glow');
+            p2Pane.classList.remove('answered', 'correct-glow', 'wrong-glow');
+            p1Status.textContent = 'Choose an answer';
+            p2Status.textContent = 'Choose an answer';
+            p1Question.textContent = currentQuestion.question;
+            p2Question.textContent = currentQuestion.question;
+
+            p1Options.innerHTML = '';
+            p2Options.innerHTML = '';
+
+            shuffledOptions.forEach((opt, index) => {
+                const btn1 = document.createElement('button');
+                btn1.className = 'pane-option';
+                btn1.textContent = opt.text;
+                btn1.dataset.index = index;
+                btn1.addEventListener('click', () => handleP1Answer(index, btn1));
+                p1Options.appendChild(btn1);
+
+                const btn2 = document.createElement('button');
+                btn2.className = 'pane-option';
+                btn2.textContent = opt.text;
+                btn2.dataset.index = index;
+                btn2.addEventListener('click', () => handleP2Answer(index, btn2));
+                p2Options.appendChild(btn2);
+            });
+
+            turnBanner.textContent = `💰 Question ${qIndex + 1} / ${TOTAL_QUESTIONS} — Both players answer!`;
+        }
+
+        factBox.textContent = '💡 ' + (currentQuestion.fact || 'Every species matters!');
+        factBox.style.borderLeftColor = '#9fc46b';
+    }
+
+    // ============================================================
+    //  SINGLE PLAYER ANSWER
+    // ============================================================
+    function handleSingleAnswer(index, btnElement) {
+        if (single.answered) return;
+        single.answered = true;
+        single.answerIndex = index;
+
+        singleOptions.querySelectorAll('.single-option').forEach(b => b.classList.remove('selected'));
+        btnElement.classList.add('selected');
+        singleOptions.querySelectorAll('.single-option').forEach(b => b.disabled = true);
+
+        const isCorrect = shuffledOptions[index] && shuffledOptions[index].isCorrect;
+
+        if (isCorrect) {
+            single.correct++;
+            singlePane.classList.add('correct-glow');
+            singleStatus.textContent = '✅ Correct!';
+        } else {
+            singlePane.classList.add('wrong-glow');
+            singleStatus.textContent = '❌ Wrong!';
+        }
+
+        singleOptions.querySelectorAll('.single-option').forEach((btn, i) => {
+            if (shuffledOptions[i] && shuffledOptions[i].isCorrect) {
+                btn.classList.add('correct-reveal');
+            } else if (i === index && !isCorrect) {
+                btn.classList.add('wrong-reveal');
+            }
+        });
+
+        singleScore.textContent = `${single.correct} / ${TOTAL_QUESTIONS}`;
+
+        factBox.textContent = (isCorrect ? '✅ Correct! ' : '❌ Wrong! ') + (currentQuestion.fact || '');
+        factBox.style.borderLeftColor = isCorrect ? '#6fbf6f' : '#d97a7a';
+
+        setTimeout(() => nextQuestion(), 1500);
+    }
+
+    // ============================================================
+    //  DUEL ANSWERS
+    // ============================================================
+    function handleP1Answer(index, btnElement) {
+        if (p1.answered) return;
+        p1.answered = true;
+        p1.answerIndex = index;
+
+        p1Options.querySelectorAll('.pane-option').forEach(b => b.classList.remove('selected'));
+        btnElement.classList.add('selected');
+        p1Options.querySelectorAll('.pane-option').forEach(b => b.disabled = true);
+
+        p1Status.textContent = '🦊 Answer locked in! Waiting for Player 2...';
+        p1Pane.classList.add('answered');
+
+        checkBothAnswered();
+    }
+
+    function handleP2Answer(index, btnElement) {
+        if (p2.answered) return;
+        p2.answered = true;
+        p2.answerIndex = index;
+
+        p2Options.querySelectorAll('.pane-option').forEach(b => b.classList.remove('selected'));
+        btnElement.classList.add('selected');
+        p2Options.querySelectorAll('.pane-option').forEach(b => b.disabled = true);
+
+        p2Status.textContent = '🐻 Answer locked in! Waiting for Player 1...';
+        p2Pane.classList.add('answered');
+
+        checkBothAnswered();
+    }
+
+    // ============================================================
+    //  CHECK BOTH ANSWERED
+    // ============================================================
+    function checkBothAnswered() {
+        if (!p1.answered || !p2.answered) return;
+
+        turnBanner.textContent = '📢 Both answered — revealing results!';
+
+        const p1Correct = shuffledOptions[p1.answerIndex] && shuffledOptions[p1.answerIndex].isCorrect;
+        const p2Correct = shuffledOptions[p2.answerIndex] && shuffledOptions[p2.answerIndex].isCorrect;
+
+        // P1
+        if (p1Correct) {
+            p1.correct++;
+            p1.streak++;
+            if (p1.streak > p1.bestStreak) p1.bestStreak = p1.streak;
+            const reward = BASE_MONEY + (STREAK_MULTIPLIER * (p1.streak - 1));
+            p1.money += reward;
+            p1Pane.classList.add('correct-glow');
+            p1Status.textContent = `✅ Correct! +$${reward} (streak ${p1.streak})`;
+        } else {
+            p1.streak = 0;
+            p1Pane.classList.add('wrong-glow');
+            p1Status.textContent = '❌ Wrong! Streak reset. No money.';
+        }
+
+        // P2
+        if (p2Correct) {
+            p2.correct++;
+            p2.streak++;
+            if (p2.streak > p2.bestStreak) p2.bestStreak = p2.streak;
+            const reward = BASE_MONEY + (STREAK_MULTIPLIER * (p2.streak - 1));
+            p2.money += reward;
+            p2Pane.classList.add('correct-glow');
+            p2Status.textContent = `✅ Correct! +$${reward} (streak ${p2.streak})`;
+        } else {
+            p2.streak = 0;
+            p2Pane.classList.add('wrong-glow');
+            p2Status.textContent = '❌ Wrong! Streak reset. No money.';
+        }
+
+        updateAllDisplays();
+        revealDuelAnswers();
+
+        let msg = '';
+        if (p1Correct && p2Correct) msg = '✅ Both correct! ';
+        else if (p1Correct) msg = '✅ Player 1 correct! ';
+        else if (p2Correct) msg = '✅ Player 2 correct! ';
+        else msg = '❌ Both wrong! ';
+        msg += currentQuestion.fact || '';
+        factBox.textContent = msg;
+        factBox.style.borderLeftColor = (p1Correct || p2Correct) ? '#6fbf6f' : '#d97a7a';
+
+        setTimeout(() => nextQuestion(), 1800);
+    }
+
+    function revealDuelAnswers() {
+        p1Options.querySelectorAll('.pane-option').forEach((btn, i) => {
+            if (shuffledOptions[i] && shuffledOptions[i].isCorrect) {
+                btn.classList.add('correct-reveal');
+            } else if (i === p1.answerIndex) {
+                btn.classList.add('wrong-reveal');
+            }
+        });
+
+        p2Options.querySelectorAll('.pane-option').forEach((btn, i) => {
+            if (shuffledOptions[i] && shuffledOptions[i].isCorrect) {
+                btn.classList.add('correct-reveal');
+            } else if (i === p2.answerIndex) {
+                btn.classList.add('wrong-reveal');
+            }
+        });
+    }
+
+    // ============================================================
+    //  DISPLAYS
+    // ============================================================
+    function updateAllDisplays() {
+        p1Money.textContent = '$' + p1.money;
+        p2Money.textContent = '$' + p2.money;
+        p1Streak.textContent = '🔥 Streak: ' + p1.streak;
+        p2Streak.textContent = '🔥 Streak: ' + p2.streak;
+        singleScore.textContent = `${single.correct} / ${TOTAL_QUESTIONS}`;
+    }
+
+    // ============================================================
+    //  NEXT QUESTION
+    // ============================================================
+    function nextQuestion() {
+        qIndex++;
+        if (qIndex >= TOTAL_QUESTIONS) {
+            endGame();
+        } else {
+            loadQuestion();
+        }
+    }
+
+    // ============================================================
+    //  END GAME
+    // ============================================================
+    function endGame() {
+        stopGlobalTimer();
+
+        if (mode === 'single') {
+            // Save to leaderboard (replace if same name exists with better score)
+            saveScore(singleName, single.correct, `${single.correct}/${TOTAL_QUESTIONS} correct · Time: ${formatTime(globalElapsed)}`, 'single', '👤', globalElapsed);
+            renderLeaderboard();
+            showScreen('leaderboard');
+        } else {
+            // Duel: show result screen, no leaderboard
+            let winner = 'tie';
+            if (p1.money > p2.money) winner = 'p1';
+            else if (p2.money > p1.money) winner = 'p2';
+
+            let title = '⚔️ Duel Results';
+            if (winner === 'p1') title = '🏆 ' + escapeHtml(p1Name) + ' Wins!';
+            else if (winner === 'p2') title = '🏆 ' + escapeHtml(p2Name) + ' Wins!';
+            else title = '🤝 It\'s a Tie!';
+            resultTitle.textContent = title;
+            resultSub.textContent = `Total time: ${formatTime(globalElapsed)}`;
+
+            resultCards.innerHTML = `
+                <div class="result-card ${winner === 'p1' ? 'winner' : ''}" style="flex:1; min-width:240px; max-width:340px; background:#f5ecd9; border:4px solid ${winner === 'p1' ? '#ffd966' : '#a67c4e'}; border-radius:40px; padding:24px 20px; box-shadow:0 12px 0 ${winner === 'p1' ? '#b57938' : '#7a5c3a'};">
+                    <div style="font-size:3rem; margin-bottom:6px;">🦊</div>
+                    <div style="font-size:1.3rem; font-weight:800; color:#2e3d2b; margin-bottom:12px;">${escapeHtml(p1Name)}</div>
+                    <div style="font-size:2rem; font-weight:900; color:#1f4a2b; margin-bottom:8px;">$${p1.money}</div>
+                    <div style="font-size:0.95rem; color:#5a4a32; font-weight:600; line-height:1.8;">
+                        Correct: ${p1.correct} / ${TOTAL_QUESTIONS}<br>
+                        Best streak: ${p1.bestStreak}<br>
+                        Total time: ${formatTime(globalElapsed)}
+                    </div>
+                    <div style="font-size:2rem; margin-top:8px;">${winner === 'p1' ? '🥇' : winner === 'tie' ? '🤝' : '🥈'}</div>
+                </div>
+                <div class="result-card ${winner === 'p2' ? 'winner' : ''}" style="flex:1; min-width:240px; max-width:340px; background:#f5ecd9; border:4px solid ${winner === 'p2' ? '#ffd966' : '#a67c4e'}; border-radius:40px; padding:24px 20px; box-shadow:0 12px 0 ${winner === 'p2' ? '#b57938' : '#7a5c3a'};">
+                    <div style="font-size:3rem; margin-bottom:6px;">🐻</div>
+                    <div style="font-size:1.3rem; font-weight:800; color:#2e3d2b; margin-bottom:12px;">${escapeHtml(p2Name)}</div>
+                    <div style="font-size:2rem; font-weight:900; color:#1f4a2b; margin-bottom:8px;">$${p2.money}</div>
+                    <div style="font-size:0.95rem; color:#5a4a32; font-weight:600; line-height:1.8;">
+                        Correct: ${p2.correct} / ${TOTAL_QUESTIONS}<br>
+                        Best streak: ${p2.bestStreak}<br>
+                        Total time: ${formatTime(globalElapsed)}
+                    </div>
+                    <div style="font-size:2rem; margin-top:8px;">${winner === 'p2' ? '🥇' : winner === 'tie' ? '🤝' : '🥈'}</div>
+                </div>
+            `;
+
+            showScreen('result');
+        }
+    }
+
+    // ============================================================
+    //  SAVE SCORE (Single player only)
+    // ============================================================
+    function saveScore(name, score, detail, modeType, avatar, time) {
+        const existingIndex = leaderboard.findIndex(entry =>
+            entry.name.toLowerCase() === name.toLowerCase() && entry.mode === modeType
+        );
+
+        const newEntry = {
+            name: name,
+            score: score,
+            detail: detail,
+            mode: modeType,
+            avatar: avatar,
+            sortKey: score,
+            time: time
+        };
+
+        if (existingIndex !== -1) {
+            const old = leaderboard[existingIndex];
+            // Replace only if new score is better, or same score with faster time
+            if (score > old.score || (score === old.score && time < old.time)) {
+                leaderboard[existingIndex] = newEntry;
+            }
+        } else {
+            leaderboard.push(newEntry);
+        }
+
+        leaderboard.sort((a, b) => {
+            if (b.sortKey !== a.sortKey) return b.sortKey - a.sortKey;
+            return a.time - b.time;
+        });
+    }
+
+    // ============================================================
+    //  RENDER LEADERBOARD
+    // ============================================================
+    function renderLeaderboard() {
+        leaderboardSub.textContent = `Top ${leaderboard.length} score${leaderboard.length !== 1 ? 's' : ''} from this session`;
+
+        if (leaderboard.length === 0) {
+            leaderboardBox.innerHTML = '<div class="lb-empty">No scores yet. Play a single player game to get on the board!</div>';
+            return;
+        }
+
+        let html = '';
+        leaderboard.forEach((entry, i) => {
+            let rankClass = '';
+            let rankIcon = '#' + (i + 1);
+            if (i === 0) { rankClass = 'gold'; rankIcon = '🥇'; }
+            else if (i === 1) { rankClass = 'silver'; rankIcon = '🥈'; }
+            else if (i === 2) { rankClass = 'bronze'; rankIcon = '🥉'; }
+
+            html += `
+                <div class="leaderboard-row ${rankClass}">
+                    <div class="lb-rank">${rankIcon}</div>
+                    <div class="lb-avatar">${entry.avatar}</div>
+                    <div class="lb-info">
+                        <div class="lb-name">${escapeHtml(entry.name)}</div>
+                        <div class="lb-detail">${escapeHtml(entry.detail)}</div>
+                    </div>
+                    <div class="lb-score">
+                        ${entry.score} pts
+                        <small>CORRECT</small>
+                    </div>
+                </div>
+            `;
+        });
+
+        leaderboardBox.innerHTML = html;
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    showScreen('rules');
+
+})();
+</script>
+</body>
+</html>
